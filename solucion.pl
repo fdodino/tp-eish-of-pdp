@@ -78,8 +78,14 @@ unidad(carola, piquero(true, 2)).
 unidadConMasVida(Jugador, MejorUnidad):-
   jugador(Jugador),
   % es bastante tricky que Vida tiene que ser el primer argumento y Unidad el whitness (testigo)
-  % otra opción más imperativa es usar findall y después calcular el mayor a manopla
-  aggregate(max(Vida, Unidad), (unidad(Jugador, Unidad), vida(Unidad, Vida)), max(Vida, MejorUnidad)).
+  % aggregate(max(Vida, Unidad), (unidad(Jugador, Unidad), vida(Unidad, Vida)), max(Vida, MejorUnidad)).
+  % utilizar un findall y luego calcular el max es imperativo
+  % preferible esta opción
+  unidad(Jugador, MejorUnidad),
+  vida(MejorUnidad, MejorVida),
+  forall((unidad(Jugador, Unidad), Unidad \= MejorUnidad), (vida(Unidad, Vida), MejorVida >= Vida)).
+  % o el not... no es cierto que haya una unidad que tenga más vida
+
 
 vida(jinete(caballo), 90).
 vida(jinete(camello), 80).
@@ -149,5 +155,5 @@ ordenValidoDesarrollo(Jugador, Tecnologias):-
 
 ordenValido(_, []).
 ordenValido(Jugador, [Tecnologia|Tecnologias]):-
-  % forall(dependencia(TecnologiaBase, Tecnologia), not(member(TecnologiaBase, Tecnologias))),
+  forall(dependencia(TecnologiaBase, Tecnologia), not(member(TecnologiaBase, Tecnologias))),
   ordenValido(Jugador, Tecnologias).
